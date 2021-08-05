@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import math
 
-print(math.log2(0.5))
-
 enwik4 = open("enwik4", 'rb').read()
 
 
@@ -10,6 +8,17 @@ def bitgen(x):
   for c in x:
     for i in range(8):
       yield int((c & (0x80 >> i)) != 0) 
+
+
+from coder import Coder
+
+enc = Coder()
+p_0 = 0.5
+for i in [0, 1, 0, 1, 0]:
+  enc.code(p_0 if i == 0 else 1 - p_0, i)
+print(enc.ob)
+
+exit(0)
 
 from collections import defaultdict
 lookup = defaultdict(lambda: [0, 0])
