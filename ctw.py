@@ -12,25 +12,23 @@ def bitgen(x):
       yield int((c & (0x80 >> i)) != 0) 
 
 from collections import defaultdict
-lookup = defaultdict(lambda: [1, 2])
+lookup = defaultdict(lambda: [0, 0])
 
 bg = bitgen(enwik4)
-BACK_BITS = 8 
-HH = 0.0
+BACK_BITS = 16 
+H = 0.0
 
 try:
   prevx = [-1]*BACK_BITS
   while 1:
     x = next(bg)
     px = tuple(prevx)
+    # https://en.wikipedia.org/wiki/Krichevsky%E2%80%93Trofimov_estimator
+    p_x = (lookup[px][x] + 0.5) / (lookup[px][0]+lookup[px][1]+1)
 
-    p_1 = lookup[px][0] / lookup[px][1]
-    p_x = p_1 if x == 1 else 1 - p_1 
-    H = -math.log2(p_x)
-    HH += H    
+    H += -math.log2(p_x)
 
-    lookup[px][0] += x == 1
-    lookup[px][1] += 1
+    lookup[px][x] += 1
      
     prevx.append(x)
     prevx = prevx[-BACK_BITS:]
@@ -38,4 +36,4 @@ try:
 except StopIteration:
   pass
 
-print("%.2f bytes of entropy" % (HH / 8))
+print("%.2f bytes of entropy" % (H / 8))
