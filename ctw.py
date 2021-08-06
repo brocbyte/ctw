@@ -12,15 +12,34 @@ def bitgen(x):
 
 from coder import Coder
 
-enc = Coder()
-p_0 = 0.5
-l = [0, 0, 1, 0]
+p_0 = 0.115
+l = [1, 0, 0, 1, 0, 1, 0, 0]
+print("orig: " + str(l))
 ones = sum(l)
 zeros = len(l) - ones
+
+enc = Coder()
 for x in l:
   enc.code(p_0, x)
-print(enc.getCoded())
-print("real: %d bits, should: < %.2f" % (len(enc.getCoded()), ones * -math.log2(1 - p_0) + zeros * -math.log2(p_0) + 2.0))
+
+coded = enc.getCoded()
+# print("coded: " + str(coded))
+
+dec = Coder(ob = coded)
+decoded = []
+
+try:
+  while 1:
+    x = dec.code(p_0)
+    decoded.append(x)
+except StopIteration:
+  pass
+    
+
+print("deco: " + str(decoded))
+
+
+# print("real: %d bits, should: < %.2f" % (len(enc.getCoded()), ones * -math.log2(1 - p_0) + zeros * -math.log2(p_0) + 2.0))
 
 exit(0)
 
