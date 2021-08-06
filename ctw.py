@@ -14,9 +14,13 @@ from coder import Coder
 
 enc = Coder()
 p_0 = 0.5
-for i in [0, 1, 0, 1, 0]:
-  enc.code(p_0 if i == 0 else 1 - p_0, i)
-print(enc.ob)
+l = [0, 0, 1, 0]
+ones = sum(l)
+zeros = len(l) - ones
+for x in l:
+  enc.code(p_0, x)
+print(enc.getCoded())
+print("real: %d bits, should: < %.2f" % (len(enc.getCoded()), ones * -math.log2(1 - p_0) + zeros * -math.log2(p_0) + 2.0))
 
 exit(0)
 
