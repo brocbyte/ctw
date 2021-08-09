@@ -1,6 +1,9 @@
 # ctw
->>> 5023 / 10000
-context tree weighting (возможно switching, если я не умру) \
+
+5023 / 10000
+
+context tree weighting (возможно switching, если я не умру)
+
 пытаемся сделать что-то полезное... 
 
 ## notes
