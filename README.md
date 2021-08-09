@@ -1,5 +1,5 @@
 # ctw
->>> 5032 / 10000
+>>> 5023 / 10000
 context tree weighting (возможно switching, если я не умру) \
 пытаемся сделать что-то полезное... 
 
@@ -13,3 +13,4 @@ good compressor <=> good estimate of the real distribution
 
 выглядит человечнее: https://web.stanford.edu/class/ee477/lectures2011/lecture4.pdf
 
+деревья: https://www.researchgate.net/publication/233971714_Estimating_Information_Theoretic_Quantities_of_spike-trains_using_the_Context_Tree_Weighting_algorithm
