@@ -27,36 +27,26 @@ class CTW():
     self.root = Node()
     self.prevx = prevx
 
-  # idk
-  def save_load(self, node = None, save = True):
-    if node == None:
-      node = self.root
-
-    if save:
-      node.old_c[0], node.old_c[1], node.old_pe, node.old_pw = node.c[0], node.c[1], node.pe, node.pw
-      node.old_child[0], node.old_child[1] = node.child[0], node.child[1]
-    else:
-      node.c[0], node.c[1], node.pe, node.pw = node.old_c[0], node.old_c[1], node.old_pe, node.old_pw
-      node.child[0], node.child[1] = node.old_child[0], node.old_child[1]
-
-    for i in range(2):
-      if node.child[i] != None:
-        self.save_load(node.child[i], save)
-
-  def update(self, x, tmp = False):
+  def update(self, x, reverse, tmp):
     node = self.root
-    node.pe += math.log(node.c[x] + 0.5) - math.log(sum(node.c) + 1.0)
-    node.c[x] += 1
-    for i in range(len(self.prevx) - 1, -1, -1):
-      # go one step Dipper
-      last = self.prevx[i]
-      if node.child[last] == None:
-        node.child[last] = Node(parent = node)
-      node = node.child[last] 
+
+    for i in range(len(self.prevx), -1, -1):
+      # in root node we skip this, only for non-duplication
+      if i != len(self.prevx):
+        # go one step Dipper
+        last = self.prevx[i]
+        if node.child[last] == None:
+          node.child[last] = Node(parent = node)
+        node = node.child[last] 
 
       # update node
-      node.pe += math.log(node.c[x] + 0.5) - math.log(sum(node.c) + 1.0)
-      node.c[x] += 1
+      if not reverse:
+        node.pe += math.log(node.c[x] + 0.5) - math.log(sum(node.c) + 1.0)
+        node.c[x] += 1
+      else:
+        node.c[x] -= 1
+        node.pe -= math.log(node.c[x] + 0.5) - math.log(sum(node.c) + 1.0)
+
 
     # node is leaf
     assert node.depth == self.context_bits
@@ -75,15 +65,14 @@ class CTW():
   def getLogPx(self, x):
     # save everything
     pw = self.root.pw
-    self.save_load(save = True)
 
     # dummy x-update
-    self.update(x, tmp = True)
+    self.update(x, reverse = False, tmp = True)
     pwx = self.root.pw
     # print("for %d, pwx: %.6f" % (x, math.exp(pwx)))
 
     # restore everything
-    self.save_load(save = False)
+    self.update(x, reverse = True, tmp = True)
 
     # log (/) = -
     return pwx - pw
@@ -95,18 +84,19 @@ class CTW():
     for i in range(2):
       if node.child[i] != None:
         self.printTree(node = node.child[i], suff = [i] + suff)
-'''
 
+'''
 context = [0, 1, 0]
 h = [0, 1, 1, 0, 1, 0, 0]
-h = [1]
+h = [0, 0]
 model = CTW(prevx = context)
 for x in h:
   # print("p_0: " + str(math.exp(model.getLogPx(0))))
   # print("p_1: " + str(math.exp(model.getLogPx(1))))
   print()
-  model.update(x) 
+  model.update(x, reverse = False, tmp = False) 
   print("we got %d" % x)
+
 print("pw: %.6f" % math.exp(model.root.pw))
 print("Tree before:")
 model.printTree()
