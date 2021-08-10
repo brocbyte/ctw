@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import math
 
-enwik4 = open("enwik4", 'rb').read()[:100]
+enwik4 = open("enwik4", 'rb').read()[:1000]
+print(enwik4)
 
 
 def bitgen(x):
@@ -14,56 +15,6 @@ from coder import Coder
 import itertools
 import numpy as np
 
-
-'''
-p_0 = 0.009
-n = 80000 
-k = int(n * (1 - p_0))
-
-def rand_bin_array(K, N):
-  arr = np.zeros(N)
-  arr[:K]  = 1
-  np.random.shuffle(arr)
-  return arr
-
-seqs = [rand_bin_array(k, n)]
-
-# seqs = list(map(list, itertools.product([0, 1], repeat = n)))
-print(seqs)
-
-errors = 0
-
-for seq in seqs:
-  enc = Coder()
-  for x in seq:
-    enc.code(p_0, x)
-  coded = enc.getCoded()
-
-  dec = Coder(ob = coded)
-  decoded = []
-  try:
-    while 1:
-      x = dec.code(p_0)
-      decoded.append(x)
-      # feels wrong, but...
-      if len(decoded) == len(seq):
-        break
-  except StopIteration:
-    pass
-  if len ([i for i, j in zip(seq, decoded) if i == j]) != len(seq):
-     print("orig: " + str(seq)) 
-     print("code: " + str(coded)) 
-     print("deco: " + str(decoded) + "\n") 
-     errors += 1
-print("TOTAL ERRS: %d" % errors)
-
-exit(0)
-'''
-
-
-
-
-
 bg = bitgen(enwik4)
 context_bits = 16 
 H = 0.0
@@ -75,27 +26,16 @@ enc = Coder()
 
 try:
   while 1:
-    pwn = ctw.getLogPn()
+    p_0 = math.exp(ctw.getLogPx(0))
+    p_1 = math.exp(ctw.getLogPx(1))
 
-    # dummy 0-update
-    ctw.update(0)
-    pwn0 = ctw.getLogPn()
-    ctw.save_load(save = False)
+    # print("p_0: " + str(p_0))
+    # print("p_1: " + str(p_1))
 
-    # dummy 1-update
-    ctw.update(1)
-    pwn1 = ctw.getLogPn()
-    ctw.save_load(save = False)
-
-    p_0 = math.exp(pwn0 - pwn)
-    p_1 = math.exp(pwn1 - pwn)
-    print("p_0: " + str(p_0))
-
-    assert (p_0 + p_1 - 1 < 1e-1)
+    assert (abs(p_0 + p_1 - 1) < 1e-6)
 
     x = next(bg)
     ctw.update(x)
-    ctw.save_load(save = True)
 
     p_x = p_0 if x == 0 else 1 - p_0
         
