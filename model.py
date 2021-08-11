@@ -1,23 +1,20 @@
 #!/usr/bin/env python3    
 import math
 import numpy as np
+
 class Node():
   def __init__(self, parent = None):
     self.parent = parent
     self.child = [None] * 2
-    self.old_child = [None] * 2
     if parent != None:
       self.depth = parent.depth + 1
     else:
       self.depth = 0
 
-    # "serializable"
     self.c = [0] * 2
-    self.old_c = [0] * 2
-    self.pe = self.old_pe = 0.0
-    self.pw = self.old_pw = 0.0
+    self.pe = 0.0
+    self.pw = 0.0
 
-    
 
 class CTW():
   def __init__(self, context_bits = 3, prevx = None):
@@ -63,13 +60,11 @@ class CTW():
       self.prevx.append(x)
 
   def getLogPx(self, x):
-    # save everything
     pw = self.root.pw
 
     # dummy x-update
     self.update(x, reverse = False, tmp = True)
     pwx = self.root.pw
-    # print("for %d, pwx: %.6f" % (x, math.exp(pwx)))
 
     # restore everything
     self.update(x, reverse = True, tmp = True)
@@ -84,24 +79,3 @@ class CTW():
     for i in range(2):
       if node.child[i] != None:
         self.printTree(node = node.child[i], suff = [i] + suff)
-
-'''
-context = [0, 1, 0]
-h = [0, 1, 1, 0, 1, 0, 0]
-h = [0, 0]
-model = CTW(prevx = context)
-for x in h:
-  # print("p_0: " + str(math.exp(model.getLogPx(0))))
-  # print("p_1: " + str(math.exp(model.getLogPx(1))))
-  print()
-  model.update(x, reverse = False, tmp = False) 
-  print("we got %d" % x)
-
-print("pw: %.6f" % math.exp(model.root.pw))
-print("Tree before:")
-model.printTree()
-print("p_1: " + str(math.exp(model.getLogPx(1))))
-print("Tree after p_1:")
-model.printTree()
-print("p_0: " + str(math.exp(model.getLogPx(0))))
-'''
