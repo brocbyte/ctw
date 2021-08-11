@@ -6,11 +6,7 @@ class Node():
   def __init__(self, parent = None):
     self.parent = parent
     self.child = [None] * 2
-    if parent != None:
-      self.depth = parent.depth + 1
-    else:
-      self.depth = 0
-
+    self.depth = parent.depth + 1 if parent != None else 0
     self.c = [0] * 2
     self.pe = 0.0
     self.pw = 0.0
@@ -18,7 +14,7 @@ class Node():
 
 class CTW():
   def __init__(self, context_bits = 3, prevx = None):
-    if prevx == None:
+    if prevx is None:
       prevx = [0] * context_bits
     self.context_bits = context_bits
     self.root = Node()
@@ -32,7 +28,7 @@ class CTW():
       if i != len(self.prevx):
         # go one step Dipper
         last = self.prevx[i]
-        if node.child[last] == None:
+        if node.child[last] is None:
           node.child[last] = Node(parent = node)
         node = node.child[last] 
 
@@ -73,9 +69,9 @@ class CTW():
     return pwx - pw
 
   def printTree(self, node = None, suff = []):
-    if node == None:
+    if node is None:
       node = self.root
-    print("node %s: (%d %d), %.6f %.6f" % (str(suff), node.c[0], node.c[1], math.exp(node.pe), math.exp(node.pw))) 
+    print("node %s: (%d %d), %.6f %.6f" % (str(suff), node.c[0], node.c[1], math.exp(node.pe), math.exp(node.pw)))
     for i in range(2):
       if node.child[i] != None:
         self.printTree(node = node.child[i], suff = [i] + suff)
